@@ -42,7 +42,7 @@ shinyServer(function(input, output) {
       })
       # Output the predicted price range
       output$diamPrice <- renderText({
-            ifelse(pricePred()[1] > 0, paste("Between u$s",
+            ifelse(pricePred()[1] > 0, paste("between u$s",
                                              round(pricePred()[2]),"and u$s",
                                              round(pricePred()[3])),
                    "Sorry, weight outside prediction range")

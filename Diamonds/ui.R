@@ -24,21 +24,22 @@ shinyUI(fluidPage(
       sidebarLayout(
             sidebarPanel(
                   sliderInput("diamCar",
-                              "Weight of the diamond (carats):",
+                              "What is the weight of your diamond?",
                               min = min(diamonds$carat),
                               max = max(diamonds$carat),
                               value = 0.7,
-                              step = 0.1),
+                              step = 0.1,
+                              post = " carats"),
                   selectInput("diamCut",
-                              "Cut:",
+                              "Which type of cut do you want?",
                               choices = levels(diamonds$cut),
                               selected = "Ideal"),
                   selectInput("diamColor",
-                              "Color:",
+                              "What color should your diamond be?",
                               choices = levels(diamonds$color),
                               selected = "G"),
                   selectInput("diamClar",
-                              "Clarity:",
+                              "What degree of clarity are you looking for?",
                               choices = levels(diamonds$clarity),
                               selected = "SI1"),
                   textOutput("diamEmpty")
@@ -46,8 +47,8 @@ shinyUI(fluidPage(
             # Show a plot of the generated distribution
             mainPanel(
                   plotOutput("diamPlot"),
-                  h2("Predicted price of the diamond"),
-                  textOutput("diamPrice")
+                  h4("A diamond with the characteristics you selected will cost"),
+                  h4(textOutput("diamPrice"))
             )
       )
 ))
