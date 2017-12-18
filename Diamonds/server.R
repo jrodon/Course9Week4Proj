@@ -12,7 +12,7 @@ library(dplyr)
 library(scales)
 library(ggplot2)
 
-# Define server logic required to draw a histogram
+# Define server logic required
 shinyServer(function(input, output) {
       # Filter the dataset with the user's options
       diamSet <- reactive({
@@ -20,30 +20,30 @@ shinyServer(function(input, output) {
                                       color == input$diamColor &
                                       clarity == input$diamClar)
       })
-      
+      # Check if there's enough data to continue
       output$diamEmpty <- renderText({
             if(nrow(diamSet()) < 3){
                   "Not enough data for estimation, please select different options"
             }
       })
-      
-      # Fit the linear model
+      # Fit the linear model. Done with the sqrt since then the relation 
+      # is more liner
       diamFit <- reactive({
             lm(sqrt(price) ~ carat, data = diamSet())
       })
-      
+      # Obtain the predicted price range
       pricePred <- reactive({
             predict(diamFit(), newdata = data.frame(carat = input$diamCar), 
                     interval = "confidence")**2
       })
-      
+      # Output the predicted price range
       output$diamPrice <- renderText({
             ifelse(pricePred()[1] > 0, paste("Between u$s",
                                              round(pricePred()[2]),"and u$s",
                                              round(pricePred()[3])),
                    "Sorry, weight outside prediction range")
       })
-      
+      # Generate the plot with the chosen options
       output$diamPlot <- renderPlot({
             carInp <- input$diamCar
             g <- ggplot(data = diamSet(), aes(x = carat, y = price, color = "cut"))
