@@ -1,10 +1,14 @@
 #
-# This is the server logic of a Shiny web application. You can run the 
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
+# This is the server logic of the "Diamonds" Shiny web application. You can run 
+# the application from the "Run App" button above.
 # 
-#    http://shiny.rstudio.com/
+# This app uses the "ggplot2::diamonds" datased to predict the price of a 
+# diamond based on the inputs weight, cut, color, and clarity, all given by the
+# user.
+# Once all those options are chosen, the app filters the database accordingly 
+# and fits a liner model sqrt(price) ~ weight. From that model then the app 
+# returns the predicted 95% confidence interval for the weight selected, along 
+# with a plot showing the selected data and the linear model.
 #
 
 library(shiny)
