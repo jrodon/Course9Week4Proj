@@ -1,0 +1,90 @@
+Calculating the price of your diamond
+========================================================
+author: Javier A. Rodón
+date: 18.12.2017
+autosize: true
+transition: concave
+font-import: http://fonts.googleapis.com/css?family=Roboto
+font-family: 'Roboto'
+
+
+You want to purchase a diamond, but do not know how much will it cost?
+========================================================
+type: sub-section
+## **The Diamonds app at <http://jrodon.shinyapps.io/Diamonds/> will help you!**
+
+Obtain the price of your desired diamond in a few easy steps:
+
+- Select the weight of your diamond
+- Choose the color, cut, and clarity
+- Voilà! You now know how much your diamond will cost you!
+
+How does it work
+========================================================
+type: sub-section
+
+- The app is based on the `ggplot2::diamonds` dataset.
+
+- Based on the input given by the user regarding the *cut*, *color*, and *clarity* of the diamond, the dataset is filtered accordingly and a simple linear regression model is adjusted.
+
+***
+
+You can choose between
+```{r, echo=FALSE}
+library(ggplot2); library(knitr); library(dplyr); library(scales)
+df <- data.frame(Colors = c(levels(diamonds$color),""), 
+                 Cuts = c(levels(diamonds$cut), rep("",3)), 
+                 Clarity = levels(diamonds$clarity))
+kable(df, format = "html")
+
+```
+
+
+Output
+========================================================
+type: prompt
+
+```{r, echo=FALSE}
+carInp <- 0.7
+diamSet <- diamonds %>% filter(cut == "Ideal" & 
+                                     color == "G" &
+                                     clarity == "SI1")
+diamFit <- lm(sqrt(price) ~ carat, data = diamSet)
+pricePred <- predict(diamFit, newdata = data.frame(carat = carInp), 
+                     interval = "confidence")**2
+```
+
+* The app produces both a plot of the diamonds data with the selected parameters and the estimated price of the diamond based on the weight selected.
+
+* On the left we see an example with for a **0.7** carat, **Ideal** cut, **G** color, and clarity **SI1** diamond.
+
+***
+
+The yellow diamond marks the location of this diamond. The linear model predicts a price between `r round(pricePred[2])` and `r round(pricePred[3])`.
+
+```{r, echo=FALSE, fig.align='center'}
+g <- ggplot(data = diamSet, aes(x = carat, y = price, color = "cut"))
+g <- g + geom_point() +
+      stat_smooth(method = "lm", formula = y ~ x,
+                  col = "blue") +
+      scale_y_continuous(trans = sqrt_trans(),
+                         breaks = trans_breaks("sqrt", 
+                                               function(x) x ^ 2, n = 10)
+                         (c(min(diamSet$price), max(diamSet$price)))) +
+      scale_x_continuous(breaks = seq(min(diamSet$carat), 
+                                      max(diamSet$carat), length.out = 5)) +
+      labs(x = "Weight (carat)", y = "Price (u$s)", 
+           caption = "(based on data from the \"Diamonds\" dataset from the \"ggplot2\" package)") +
+      theme(legend.position="none")
+g + geom_point(data = data.frame(carat = carInp, price = pricePred[1]),
+                                 color = "black", cex = 4, shape = 23, fill = "yellow")
+
+```
+
+
+================
+type:alert
+
+## Try now the **Diamonds** app at   
+
+# <http://jrodon.shinyapps.io/Diamonds/>!
